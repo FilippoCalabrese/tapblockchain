@@ -2,4 +2,4 @@ language: java
 # skip installation step
 install: true
 script:
-- mvn -f com.fcwebdev.tapblockchain/pom.xml clean verify
+- mvn -f pom.xml clean verify
