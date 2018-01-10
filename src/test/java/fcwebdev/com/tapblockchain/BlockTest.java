@@ -68,6 +68,10 @@ public class BlockTest {
 	}
 	
 	@Test
+	public void assertCorrectHashNotNull() {
+		assertNotNull(testBlock.getHash());
+	}
+	@Test
 	public void testPreviousHashSetter() {
 		testBlock.setPreviousHash("1234");
 		assertEquals("1234", testBlock.getPreviousHash());

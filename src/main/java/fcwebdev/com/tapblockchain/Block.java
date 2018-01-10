@@ -11,7 +11,7 @@ public class Block {
 	private String hash;
 	
 	private String[] algorithm;
-	private boolean hasValidHash;
+	private boolean hasValidHash = true;
 	private int index;
 	private int noun = 0;
 
@@ -62,15 +62,13 @@ public class Block {
 	public void generateHash() {
 		try {
 			this.hash = generate(this.index + this.timestamp + this.data + this.noun, algorithm);
-		} catch (NoSuchAlgorithmException e) {
-			declareBlockInvalidHash("error: Invalid algorithm");
-		} catch (UnsupportedEncodingException e) {
-			declareBlockInvalidHash("error: unsupported encoding");
+		} catch (NoSuchAlgorithmException|UnsupportedEncodingException e) {
+			declareBlockInvalidHash();
 		}
 	}
 
-	private void declareBlockInvalidHash(String message) {
-		this.hash = message;
+	private void declareBlockInvalidHash() {
+		this.hash = null;
 		this.hasValidHash = false;
 	}
 
