@@ -3,18 +3,22 @@ package fcwebdev.com.tapblockchain;
 import static org.junit.Assert.*;
 
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
 
-public class BlockTest {
+public class StandardBlockTest {
 	
 	private Block testBlock;
 	
 	@Before
 	public void init() {
 		String[] algorithm = {"SHA-256", "UTF-8"};
-		testBlock = new Block("1/1/2018", "some data", algorithm);
+		testBlock = new StandardBlock("some data", algorithm);
 	}
 	
 	@Test
@@ -83,8 +87,21 @@ public class BlockTest {
 	}
 	
 	private void validateBlockHashWithCustomAlgorithm(boolean supposed, String[] algorithm) {
-		testBlock = new Block("1/1/2018", "some data", algorithm);
+		testBlock = new StandardBlock("some data", algorithm);
 		assertEquals(supposed, testBlock.isHashValid());
+	}
+	
+	@Test
+	public void testBlockTimestamp() {
+		String timestamp = getCurrentTime();
+		assertEquals(timestamp, testBlock.getBlockTimestamp().substring(0, 10));
+	}
+	
+	private String getCurrentTime() {
+		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+		Date today = Calendar.getInstance().getTime();        
+		String reportDate = df.format(today);
+		return reportDate;
 	}
 
 }

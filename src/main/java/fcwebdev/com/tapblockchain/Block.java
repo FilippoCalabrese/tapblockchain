@@ -1,92 +1,27 @@
 package fcwebdev.com.tapblockchain;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+public interface Block {
 
-public class Block {
-	private String data;
-	private String timestamp;
-	private String previousHash;
-	private String hash;
-	
-	private String[] algorithm;
-	private boolean hasValidHash = true;
-	private int index;
-	private int noun = 0;
+	String getBlockTimestamp();
 
-	public Block(String timestamp, String data, String[] algorithm) {
-		this.timestamp = timestamp;
-		this.data = data;
-		this.algorithm = algorithm;
-		this.previousHash = "";
-		generateHash();
-	}
-	
-	public boolean isHashValid() {
-		return hasValidHash;
-	}
+	boolean isHashValid();
 
-	public int getIndex() {
-		return this.index;
-	}
+	int getIndex();
 
-	public void setIndex(int index) {
-		this.index = index;
-	}
-	
-	public int getNoun() {
-		return this.noun;
-	}
+	void setIndex(int index);
 
-	public void increaseNoun() {
-		this.noun = noun + 1;
-	}
+	int getNoun();
 
-	public String getPreviousHash() {
-		return previousHash;
-	}
+	void increaseNoun();
 
-	public String getData() {
-		return this.data;
-	}
+	String getPreviousHash();
 
-	public void setPreviousHash(String previousHash) {
-		this.previousHash = previousHash;
-	}
+	String getData();
 
-	public String getHash() {
-		return hash;
-	}
+	void setPreviousHash(String previousHash);
 
-	public void generateHash() {
-		try {
-			this.hash = generate(this.index + this.timestamp + this.data + this.noun, algorithm);
-		} catch (NoSuchAlgorithmException|UnsupportedEncodingException e) {
-			declareBlockInvalidHash();
-		}
-	}
+	String getHash();
 
-	private void declareBlockInvalidHash() {
-		this.hash = null;
-		this.hasValidHash = false;
-	}
-
-	private String generate(String input, String[] algorithm) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		MessageDigest md = MessageDigest.getInstance(algorithm[0]);
-		md.reset();
-		
-		byte[] buffer = input.getBytes(algorithm[1]);
-		md.update(buffer);
-		
-		byte[] digest = md.digest();
-
-		String hexStr = "";
-		for (int i = 0; i < digest.length; i++) {
-			hexStr += Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1);
-		}
-		this.hasValidHash = true;
-		return hexStr;
-	}
+	void generateHash();
 
 }

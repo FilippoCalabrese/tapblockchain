@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Test;
+import static org.mockito.Mockito.*;
 
 public class BlockChainTest {
 
@@ -32,9 +33,14 @@ public class BlockChainTest {
 	public void testBlockListGetter() {
 		assertTrue(instance.getBlocksList() instanceof LinkedList);
 	}
+	
+	@Test
+	public void testBlockListIsInitizlized() {
+		assertNotNull(instance.getBlocksList());
+	}
 
 	@Test
-	public void testDifficultyGetter() {
+	public void testDifficultyGetterWithInitialValue() {
 		assertEquals(1, instance.getDifficulty());
 	}
 
@@ -50,6 +56,36 @@ public class BlockChainTest {
 		Block genesis = instance.getBlockFromIndex(0);
 		assertEquals("GENESIS", genesis.getPreviousHash());
 	}
+	
+	@Test
+	//Questo test ha senso se i componenti sono mokkati?
+	public void testCorrectRelationBetweenFollowingBlocks() {
+		insertDummyBlock();
+		Block first = instance.getBlockFromIndex(1);
+		String correctHash = first.getHash();
+		
+		insertDummyBlock();
+		Block secondBlock = instance.getBlockFromIndex(2);
+		String secondBlockHash = secondBlock.getPreviousHash();
+		assertEquals(correctHash, secondBlockHash);
+		
+	}
+	
+	@Test
+	public void verifyDifficultyCheckFailOnWrongString() {
+		assertEquals(false, instance.checkStringDifficulty("1234"));
+	}
+	
+	@Test
+	public void verifyDifficultyCheckSuccessOnCorrectString() {
+		assertEquals(true, instance.checkStringDifficulty("0123"));
+	}
+	
+	@Test
+	public void verifyDifficultyCheckSuccessOnDIfficultyTwo() {
+		instance.increaseDifficulty();
+		assertEquals(true, instance.checkStringDifficulty("00123"));
+	}
 
 // JaCoCo bug with this test
 	
@@ -61,7 +97,7 @@ public class BlockChainTest {
 
 	@Test
 	public void testAddNewBlock() {
-		instance.addNewBlock("1/12/2018", "some fake data");
+		instance.addNewBlock(generateMockedBlock());
 		assertEquals(2, instance.getBlocksList().size());
 	}
 
@@ -79,9 +115,29 @@ public class BlockChainTest {
 	}
 
 	private Block insertDummyBlock() {
-		instance.addNewBlock("1/12/2018", "some fake data");
+		Block mockedBlock = generateMockedBlock();
+		instance.addNewBlock(mockedBlock);
 		Block inserted = instance.getBlockFromIndex(1);
 		return inserted;
+	}
+	
+	private Block generateMockedBlock() {
+		Block mockedBlock = mock(Block.class);
+		when(mockedBlock.getHash()).thenReturn("00123");
+		when(mockedBlock.getPreviousHash()).thenReturn("00123");
+		return mockedBlock;
+	}
+	
+	private void insertMockedBlockForAddingTest() {
+		Block mockedBlock = mock(Block.class);
+		when(mockedBlock.getHash()).thenReturn("123").thenReturn("0123");
+		instance.addNewBlock(mockedBlock);
+	}
+	
+	@Test
+	public void testAddBlock() {
+		insertMockedBlockForAddingTest();
+		assertEquals(2, instance.getBlocksList().size());
 	}
 
 }

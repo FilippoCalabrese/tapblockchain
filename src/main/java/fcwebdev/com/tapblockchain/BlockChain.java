@@ -39,7 +39,7 @@ public class BlockChain {
 	}
 
 	private void createGenesisBlock() {
-		Block genesisBlock = new Block("1/12/2017", "Genesis Block", ALGORITHM);
+		StandardBlock genesisBlock = new StandardBlock("GENESIS BLOCK", ALGORITHM);
 		genesisBlock.setIndex(0);
 		genesisBlock.setPreviousHash("GENESIS");
 		blocks.add(genesisBlock);
@@ -49,8 +49,7 @@ public class BlockChain {
 		return blocks.get(index);
 	}
 
-	public void addNewBlock(String timestamp, String data) {
-		Block newBlock = new Block(timestamp, data, ALGORITHM);
+	public void addNewBlock(Block newBlock) {
 		newBlock.setPreviousHash(blocks.get(blocks.size() - 1).getHash());
 		newBlock.setIndex(blocks.size());
 
@@ -58,10 +57,11 @@ public class BlockChain {
 			newBlock.increaseNoun();
 			newBlock.generateHash();
 		}
+		
 		blocks.add(newBlock);
 	}
 
-	private boolean checkStringDifficulty(String hash) {
+	public boolean checkStringDifficulty(String hash) {
 		boolean flag = true;
 		for (int i = 0; i < difficulty; i++) {
 			if (hash.charAt(i) != '0') {
