@@ -58,7 +58,7 @@ public class BlockTest {
 	
 	@Test
 	public void testUnsupportedEncodingExceptionHandling() {
-		String[] algorithm = {"SHA-256", ""};
+		String[] algorithm = {"SHA-256", "fake encoding"};
 		validateBlockHashWithCustomAlgorithm(false, algorithm);
 	}
 	
@@ -71,6 +71,11 @@ public class BlockTest {
 	public void testPreviousHashSetter() {
 		testBlock.setPreviousHash("1234");
 		assertEquals("1234", testBlock.getPreviousHash());
+	}
+	
+	@Test
+	public void testCorrectBlockHashValidation() {
+		assertEquals(true, testBlock.isHashValid());
 	}
 	
 	private void validateBlockHashWithCustomAlgorithm(boolean supposed, String[] algorithm) {

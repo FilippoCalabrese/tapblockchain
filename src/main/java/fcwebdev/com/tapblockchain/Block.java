@@ -5,7 +5,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Block {
-	private String data, timestamp, previousHash, hash;
+	private String data;
+	private String timestamp;
+	private String previousHash;
+	private String hash;
+	
 	private String[] algorithm;
 	private boolean hasValidHash;
 	private int index;
@@ -30,6 +34,10 @@ public class Block {
 	public void setIndex(int index) {
 		this.index = index;
 	}
+	
+	public int getNoun() {
+		return this.noun;
+	}
 
 	public void increaseNoun() {
 		this.noun = noun + 1;
@@ -53,7 +61,7 @@ public class Block {
 
 	public void generateHash() {
 		try {
-			this.hash = generate(this.index + this.timestamp + this.data + this.noun, algorithm[0]);
+			this.hash = generate(this.index + this.timestamp + this.data + this.noun, algorithm);
 		} catch (NoSuchAlgorithmException e) {
 			declareBlockInvalidHash("error: Invalid algorithm");
 		} catch (UnsupportedEncodingException e) {
@@ -66,22 +74,21 @@ public class Block {
 		this.hasValidHash = false;
 	}
 
-	private String generate(String input, String algorithm) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		MessageDigest md = MessageDigest.getInstance(algorithm);
+	private String generate(String input, String[] algorithm) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		MessageDigest md = MessageDigest.getInstance(algorithm[0]);
 		md.reset();
-		byte[] buffer = input.getBytes("UTF-8");
+		
+		byte[] buffer = input.getBytes(algorithm[1]);
 		md.update(buffer);
+		
 		byte[] digest = md.digest();
 
 		String hexStr = "";
 		for (int i = 0; i < digest.length; i++) {
 			hexStr += Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1);
 		}
+		this.hasValidHash = true;
 		return hexStr;
-	}
-
-	public int getNoun() {
-		return this.noun;
 	}
 
 }
